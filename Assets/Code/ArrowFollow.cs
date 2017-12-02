@@ -5,8 +5,14 @@ using UnityEngine;
 public class ArrowFollow : MonoBehaviour {
 
 	public Transform target;
+
+	GameManager gm;
 	// Use this for initialization
 	void Start () {
+		gm = GameObject.Find("Game Manager").GetComponent<GameManager>();
+		if (target == null) {
+			target = gm.GetPlayerTransform();
+		}
 		
 	}
 	
