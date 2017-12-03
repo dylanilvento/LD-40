@@ -6,6 +6,10 @@ public class PolygonController : MonoBehaviour {
 
 	Transform player;
 	GameObject playerGo;
+
+	PlayerCombat playerCombat;
+	PolygonCollider2D polygonCollider;
+	Rigidbody2D rb;
 	GameManager gm;
 	[Range(0, 10f)]
 	public float movementSpeed;
@@ -17,6 +21,9 @@ public class PolygonController : MonoBehaviour {
 	void Start () {
 		gm = GameObject.Find("Game Manager").GetComponent<GameManager>();
 		player = gm.GetPlayerTransform();
+		playerCombat = player.gameObject.GetComponent<PlayerCombat>();
+		rb = GetComponent<Rigidbody2D>();
+		polygonCollider = GetComponent<PolygonCollider2D>();
 		// playerGo = GameObject.FindGameObjectWithTag("Player");
 		// player = playerGo.transform;
 
@@ -36,14 +43,17 @@ public class PolygonController : MonoBehaviour {
 		Vector2 playerPosition = player.position;
 		Vector2 currentPosition = transform.position;
 		
-		if (!attachedToPlayer && (Vector2.Distance(playerPosition, currentPosition) < player.gameObject.GetComponent<PlayerCombat>().GetArmorRadius())) {
+		if (!attachedToPlayer && detachedFromEnemy && (Vector2.Distance(playerPosition, currentPosition) < playerCombat.GetArmorRadius())) {
 			// print("Test");
 			// transform.SetParent(player);
 			transform.SetParent(player, true);
 			attachedToPlayer = true;
-			// player.gameObject.GetComponent<PlayerCombat>().IncrementArmorRadius();
+			polygonCollider.enabled = true;
+			playerCombat.IncrementPolygonCount();
+			playerCombat.IncrementArmorRadius();
+			gameObject.layer = 9;
 
-			TestDistanceAwayFromPlayer(player.gameObject.GetComponent<PlayerCombat>().GetArmorRadius());
+			// TestDistanceAwayFromPlayer(player.gameObject.GetComponent<PlayerCombat>().GetArmorRadius());
 
 		}
 	}
@@ -69,15 +79,27 @@ public class PolygonController : MonoBehaviour {
 		
 	}
 
-	void TestDistanceAwayFromPlayer (float distance) {
-		Vector2 playerPosition = player.position;
-		Vector2 currentPosition = transform.position;
-		while (Vector2.Distance(playerPosition, currentPosition) > distance) {
-			Vector2 relativePositionNormal = (playerPosition - currentPosition).normalized;
-			
-			transform.position = Vector2.MoveTowards(currentPosition, playerPosition, Time.deltaTime * movementSpeed);
-		}
+	public void StartDetachCoroutine () {
+		StartCoroutine("FinishDetachment");
 	}
+
+	IEnumerator FinishDetachment () {
+		yield return new WaitForSeconds(0.3f);
+
+		detachedFromEnemy = true;
+		Destroy(rb);
+
+	}
+
+	// void TestDistanceAwayFromPlayer (float distance) {
+	// 	Vector2 playerPosition = player.position;
+	// 	Vector2 currentPosition = transform.position;
+	// 	while (Vector2.Distance(playerPosition, currentPosition) > distance) {
+	// 		Vector2 relativePositionNormal = (playerPosition - currentPosition).normalized;
+			
+	// 		transform.position = Vector2.MoveTowards(currentPosition, playerPosition, Time.deltaTime * movementSpeed);
+	// 	}
+	// }
 
 	// void OnTriggerEnter2D (Collider2D other) {
 	// 	if (other.gameObject.layer == 12 && !attachedToPlayer) {

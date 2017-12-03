@@ -12,7 +12,7 @@ public class RotateGroupController : MonoBehaviour {
 	void Start () {
 		polygonRB = GetComponentsInChildren<Rigidbody2D>();
 		polygonControls = GetComponentsInChildren<PolygonController>();
-		polygonColliders = GetComponentsInChildren<PolygonCollider2D>();
+		// polygonColliders = GetComponentsInChildren<PolygonCollider2D>();
 		
 	}
 	
@@ -31,12 +31,12 @@ public class RotateGroupController : MonoBehaviour {
 
 		foreach (PolygonController pc in polygonControls)
 		{
-			pc.detachedFromEnemy = true;
+			pc.StartDetachCoroutine();
 		}
 
-		foreach (PolygonCollider2D pc in polygonColliders)
-		{
-			pc.enabled = true;
-		}
+		// foreach (PolygonCollider2D pc in polygonColliders)
+		// {
+		// 	pc.enabled = true;
+		// }
 	}
 }

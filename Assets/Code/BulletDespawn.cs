@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BulletDespawn : MonoBehaviour {
 
-	float lifespan = 3f;
+	float lifespan = 1f;
 	// Use this for initialization
 	void Start () {
 		

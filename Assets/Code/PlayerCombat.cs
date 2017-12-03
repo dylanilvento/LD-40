@@ -7,13 +7,20 @@ public class PlayerCombat : MonoBehaviour {
 	public GameObject bullet;
 	int playerId = 0;
 	Player player;
+	
+	[Range(0, 15f)]
+	public int polygonCount = 0;
+
+	float polygonRatio;
 
 	// float percentile = 0.1f;
 	float timeBetweenShots = 0.08f;
 	float timeUntilNextShot;
-	float bulletSpeed = 8f;
+	[Range(0, 15f)]
+	public float bulletSpeed;
 
 	float armorRadius = 0.01f;
+	float armorRadiusRate = 0.025f;
 
 	Vector2 shootVector;
 	// Use this for initialization
@@ -48,7 +55,7 @@ public class PlayerCombat : MonoBehaviour {
 			spawnedBullet.GetComponent<Rigidbody2D>().velocity = shootVector.normalized * bulletSpeed;
 		}
 
-		else {
+		else if (timeUntilNextShot >= 0){
 			timeUntilNextShot -= Time.deltaTime;
 		}
 	}
@@ -57,7 +64,14 @@ public class PlayerCombat : MonoBehaviour {
 		return armorRadius;
 	}
 
+	public void IncrementPolygonCount () {
+		polygonCount++;
+	}
+
 	public void IncrementArmorRadius () {
-		armorRadius += 0.01f;
+		polygonRatio = 32f * polygonCount/(100f+((polygonCount/50) * 50));
+		// armorRadius = polygonCount / ((32 * (polygonCount/100f)) * Mathf.PI);
+		armorRadius = polygonCount / (polygonRatio * Mathf.PI);
+		print(polygonRatio);
 	}
 }

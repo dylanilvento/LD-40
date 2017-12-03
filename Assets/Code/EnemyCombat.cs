@@ -18,9 +18,10 @@ public class EnemyCombat : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D (Collision2D other) {
-		print(other.gameObject.layer);
+		
 
 		if (other.gameObject.layer == 8) {
+			// print(other.gameObject.layer);
 
 			parentGroup.transform.DetachChildren();
 			Destroy(parentGroup);
