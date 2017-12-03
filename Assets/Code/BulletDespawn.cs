@@ -18,7 +18,7 @@ public class BulletDespawn : MonoBehaviour {
 
 		if (lifespan <= 0) Destroy(this.gameObject);
 
-		print(lifespan);
+		// print(lifespan);
 	}
 
 	void OnCollisionEnter2D (Collision2D other) {
@@ -26,10 +26,6 @@ public class BulletDespawn : MonoBehaviour {
 	}
 
 	void CountdownToDestroy () {
-
-		
-
-		
 
 		
 		

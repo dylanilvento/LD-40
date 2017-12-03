@@ -13,6 +13,8 @@ public class PlayerCombat : MonoBehaviour {
 	float timeUntilNextShot;
 	float bulletSpeed = 8f;
 
+	float armorRadius = 0.01f;
+
 	Vector2 shootVector;
 	// Use this for initialization
 	void Start () {
@@ -49,5 +51,13 @@ public class PlayerCombat : MonoBehaviour {
 		else {
 			timeUntilNextShot -= Time.deltaTime;
 		}
+	}
+
+	public float GetArmorRadius () {
+		return armorRadius;
+	}
+
+	public void IncrementArmorRadius () {
+		armorRadius += 0.01f;
 	}
 }
