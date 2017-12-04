@@ -45,11 +45,14 @@ public class EnemyCombat : MonoBehaviour {
 			float t = Random.Range(timeBetweenShots, timeBetweenShots + 3f);
 			
 			yield return new WaitForSeconds(t);
-			Vector2 shootVector = (player.transform.position - transform.position).normalized;
-			GameObject spanwnedBullet = Instantiate (bullet, transform.position, Quaternion.identity);
-			spanwnedBullet.GetComponent<SpriteRenderer>().color = enemyColor;
+			if (player != null) {
+				Vector2 shootVector = (player.transform.position - transform.position).normalized;
+				GameObject spanwnedBullet = Instantiate (bullet, transform.position, Quaternion.identity);
+				spanwnedBullet.GetComponent<SpriteRenderer>().color = enemyColor;
 
-			spanwnedBullet.GetComponent<Rigidbody2D>().velocity = shootVector * bulletSpeed;
+				spanwnedBullet.GetComponent<Rigidbody2D>().velocity = shootVector * bulletSpeed;
+			}
+				
 			
 		}
 	}
