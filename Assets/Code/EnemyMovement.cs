@@ -11,6 +11,7 @@ public class EnemyMovement : MonoBehaviour {
 	GameObject rotateGroup;
 
 	EnemyCombat enemyCombat;
+	
 
 
 	[Range(0, 10f)]
@@ -33,12 +34,15 @@ public class EnemyMovement : MonoBehaviour {
 	float t;
 	// Use this for initialization
 	void Start () {
+		
 		gm = GameObject.Find("Game Manager").GetComponent<GameManager>();
+		
 		if (!gm.playerDead) {
 			player = gm.GetPlayerTransform();
 			playerCombat = gm.GetPlayer().GetComponent<PlayerCombat>();
 		
 		}
+
 		rotateGroup = transform.GetChild(0).gameObject;
 		enemyCombat = transform.GetChild(0).GetComponent<EnemyCombat>();
 

@@ -6,7 +6,7 @@ public class EnemyCombat : MonoBehaviour {
 
 	GameObject parentGroup;
 
-
+	PolygonCollider2D polygonCollider;
 	GameObject player;
 	GameManager gm;
 	public GameObject bullet;
@@ -21,6 +21,7 @@ public class EnemyCombat : MonoBehaviour {
 	public GameObject explosion;
 	// Use this for initialization
 	void Start () {
+		// polygonCollider.GetComponent<PolygonCollider2D>();
 		parentGroup = transform.parent.gameObject;
 		gm = GameObject.Find("Game Manager").GetComponent<GameManager>();
 		if (!gm.playerDead) player = gm.GetPlayer();
@@ -60,7 +61,7 @@ public class EnemyCombat : MonoBehaviour {
 
 		if (other.gameObject.layer == 8 || other.gameObject.layer == 9) {
 			// print(other.gameObject.layer);
-
+			// polygonCollider.enabled = false;
 			parentGroup.transform.DetachChildren();
 			Destroy(parentGroup);
 			GetComponent<RotateGroupController>().ActivatePolygons();

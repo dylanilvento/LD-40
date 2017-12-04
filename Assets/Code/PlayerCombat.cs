@@ -25,6 +25,8 @@ public class PlayerCombat : MonoBehaviour {
 	[Range(0, 15f)]
 	public float bulletSpeed;
 
+	bool disableHits = false;
+
 	float armorRadius = 0.01f;
 	float armorRadiusRate = 0.025f;
 
@@ -97,9 +99,10 @@ public class PlayerCombat : MonoBehaviour {
 	}
 
 	public void DecrementPolygonCount(GameObject polygon) {
-		if (currentScore > 0) currentScore--;
+		
 		polygons.Remove(polygon);
-
+		if (currentScore > 0) currentScore--;
+		
 		if (polygons.Count == 0) {
 
 			// polygons = new List<GameObject>();
@@ -126,9 +129,11 @@ public class PlayerCombat : MonoBehaviour {
 
 
 	void OnCollisionEnter2D (Collision2D other) {
-		if (other.gameObject.layer == 10 || other.gameObject.layer == 11) {
+		if (other.gameObject.layer == 10 || other.gameObject.layer == 11 && !disableHits) {
 			
 			TakeDamage();
+			StartCoroutine("InvinsibilityTimer");
+			
 		}
 	}
 
@@ -157,6 +162,13 @@ public class PlayerCombat : MonoBehaviour {
 				// polygons.RemoveAt(ii);
 			}
 		}
+	}
+
+	IEnumerator InvinsibilityTimer () {
+		disableHits = true;
+		yield return new WaitForSeconds(1);
+		disableHits = false;
+
 	}
 
 	void Die() {

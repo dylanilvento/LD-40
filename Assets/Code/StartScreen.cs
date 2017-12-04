@@ -4,10 +4,7 @@ using UnityEngine;
 using Rewired;
 using UnityEngine.SceneManagement;
 
-public class TitleBob : MonoBehaviour {
-	float t;
-	[Range(0, 10f)]
-	public float modifier;
+public class StartScreen : MonoBehaviour {
 
 	Player player;
 	// Use this for initialization
@@ -17,13 +14,8 @@ public class TitleBob : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		t += Time.deltaTime;
-
-		float y = Mathf.Sin(t + modifier);
-
-		transform.position = new Vector2(transform.position.x, y);
-
-		
-
+		if (player.GetButtonDown("Start")) {
+			SceneManager.LoadScene("Main");
+		}
 	}
 }

@@ -6,7 +6,8 @@ public class CameraMovement : MonoBehaviour {
 
 	Transform player;
 
-	float dampening = 2.5f;
+	[Range(0f,5)]
+	public float dampening = 2.5f;
 	GameManager gm;
 	// Use this for initialization
 	void Start () {

@@ -11,12 +11,15 @@ public class EnemySpawner : MonoBehaviour {
 	GameManager gm;
 
 	Player player;
+
+	
 	float maxTime = 8f;
 	float minTime = 2f;
 
 	float[] xRange = {-3f, 25f};
 	float[] yRange = {-12f, 4f};
 	void Start () {
+		
 		player = ReInput.players.GetPlayer(0);
 		gm = GetComponent<GameManager>();
 		StartCoroutine("SpawnEnemies");
