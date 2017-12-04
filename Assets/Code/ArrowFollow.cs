@@ -18,6 +18,10 @@ public class ArrowFollow : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if (!gm.playerDead) FollowPlayer();
+	}
+
+	void FollowPlayer () {
 		Vector3 vectorToTarget = target.position - transform.position;
 		float angle = Mathf.Atan2(vectorToTarget.y, vectorToTarget.x) * Mathf.Rad2Deg - 90;
 		Quaternion q = Quaternion.AngleAxis(angle, Vector3.forward);

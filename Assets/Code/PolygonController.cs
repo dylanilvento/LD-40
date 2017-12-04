@@ -20,8 +20,10 @@ public class PolygonController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		gm = GameObject.Find("Game Manager").GetComponent<GameManager>();
-		player = gm.GetPlayerTransform();
-		playerCombat = player.gameObject.GetComponent<PlayerCombat>();
+		if (!gm.playerDead) {
+			player = gm.GetPlayerTransform();
+			playerCombat = player.gameObject.GetComponent<PlayerCombat>();
+		}
 		rb = GetComponent<Rigidbody2D>();
 		polygonCollider = GetComponent<PolygonCollider2D>();
 		// playerGo = GameObject.FindGameObjectWithTag("Player");
@@ -33,29 +35,14 @@ public class PolygonController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		
-		if (detachedFromEnemy && !attachedToPlayer) {
+		if (detachedFromEnemy && !attachedToPlayer && !gm.playerDead) {
 			Magnetize();
 		}
 		
 	}
 
 	void FixedUpdate () {
-		Vector2 playerPosition = player.position;
-		Vector2 currentPosition = transform.position;
-		
-		if (!attachedToPlayer && detachedFromEnemy && (Vector2.Distance(playerPosition, currentPosition) < playerCombat.GetArmorRadius())) {
-			// print("Test");
-			// transform.SetParent(player);
-			transform.SetParent(player, true);
-			attachedToPlayer = true;
-			polygonCollider.enabled = true;
-			playerCombat.IncrementPolygonCount();
-			playerCombat.IncrementArmorRadius();
-			gameObject.layer = 9;
-
-			// TestDistanceAwayFromPlayer(player.gameObject.GetComponent<PlayerCombat>().GetArmorRadius());
-
-		}
+		if (!gm.playerDead) AttachToPlayer();
 	}
 
 	void Magnetize () {
@@ -79,6 +66,26 @@ public class PolygonController : MonoBehaviour {
 		
 	}
 
+	void AttachToPlayer() {
+		Vector2 playerPosition = player.position;
+		Vector2 currentPosition = transform.position;
+		
+		if (!attachedToPlayer && detachedFromEnemy && !gm.playerDead && (Vector2.Distance(playerPosition, currentPosition) < playerCombat.GetArmorRadius())) {
+			
+			// print("Test");
+			// transform.SetParent(player);
+			transform.SetParent(player, true);
+			attachedToPlayer = true;
+			polygonCollider.enabled = true;
+			playerCombat.IncrementPolygonCount(this.gameObject);
+			// playerCombat.IncrementArmorRadius();
+			gameObject.layer = 9;
+
+			// TestDistanceAwayFromPlayer(player.gameObject.GetComponent<PlayerCombat>().GetArmorRadius());
+
+		}
+	}
+
 	public void StartDetachCoroutine () {
 		StartCoroutine("FinishDetachment");
 	}
@@ -88,6 +95,21 @@ public class PolygonController : MonoBehaviour {
 
 		detachedFromEnemy = true;
 		Destroy(rb);
+
+	}
+
+	public void StartDestroyCoroutine () {
+		StartCoroutine("DestroySelf");
+	}
+
+	IEnumerator DestroySelf () {
+		
+		Destroy(polygonCollider);
+		yield return new WaitForSeconds(Random.Range(0f, 0.3f));
+		transform.parent = null;
+		playerCombat.DecrementPolygonCount(this.gameObject);
+		yield return new WaitForSeconds(0.5f);
+		Destroy(this.gameObject);
 
 	}
 

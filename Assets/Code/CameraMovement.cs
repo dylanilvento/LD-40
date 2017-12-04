@@ -16,6 +16,11 @@ public class CameraMovement : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
+		if(!gm.playerDead) FollowPlayer();
+
+	}
+
+	void FollowPlayer() {
 		if ((player.position.x < transform.position.x - dampening) && transform.position.x > 0) {
 
 			if ((player.position.y < transform.position.y - dampening) && transform.position.y > -9.3f) {
@@ -93,6 +98,7 @@ public class CameraMovement : MonoBehaviour {
 			}
 			
 		}
-
 	}
+
+
 }

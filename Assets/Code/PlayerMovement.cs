@@ -8,7 +8,7 @@ public class PlayerMovement : MonoBehaviour {
 	int playerId = 0;
 	Player player;
 	Vector3 moveVector;
-	float moveSpeed = 6f;
+	public float moveSpeed = 6f;
 
 	Quaternion originalDir;
 

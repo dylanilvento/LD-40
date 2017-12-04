@@ -4,12 +4,18 @@ using UnityEngine;
 using Rewired;
 
 public class PlayerCombat : MonoBehaviour {
-	public GameObject bullet;
+	public GameObject bullet, explosion;
 	int playerId = 0;
 	Player player;
 	
-	[Range(0, 15f)]
-	public int polygonCount = 0;
+	public int currentScore = 0;
+	public int maxScore = 0;
+	List<GameObject> polygons = new List<GameObject>();
+
+	GameManager gm;
+	PlayerMovement playerMovement;
+	TrailRenderer tr;
+	float baseMoveSpeed;
 
 	float polygonRatio;
 
@@ -27,6 +33,10 @@ public class PlayerCombat : MonoBehaviour {
 	void Start () {
 		player = ReInput.players.GetPlayer(playerId);
 		timeUntilNextShot = timeBetweenShots;
+		gm = GameObject.Find("Game Manager").GetComponent<GameManager>();
+		playerMovement = GetComponent<PlayerMovement>();
+		baseMoveSpeed = playerMovement.moveSpeed;
+		tr = GetComponent<TrailRenderer>();
 	}
 	
 	// Update is called once per frame
@@ -64,14 +74,97 @@ public class PlayerCombat : MonoBehaviour {
 		return armorRadius;
 	}
 
-	public void IncrementPolygonCount () {
-		polygonCount++;
+	public void IncrementPolygonCount (GameObject polygon) {
+		
+		currentScore++;
+		if (currentScore > maxScore) maxScore = currentScore;
+		// print("test");
+		polygons.Add(polygon);
+		AdjustArmorRadius();
 	}
 
-	public void IncrementArmorRadius () {
-		polygonRatio = 32f * polygonCount/(100f+((polygonCount/50) * 50));
-		// armorRadius = polygonCount / ((32 * (polygonCount/100f)) * Mathf.PI);
-		armorRadius = polygonCount / (polygonRatio * Mathf.PI);
-		print(polygonRatio);
+	public void AdjustArmorRadius () {
+		
+		// polygonRatio = 32f * polygonCount/(20f+polygonCount);
+		polygonRatio = 32f * polygons.Count/(20f+polygons.Count);
+		
+		// armorRadius = polygonCount / (polygonRatio * Mathf.PI);
+		armorRadius = polygons.Count / (polygonRatio * Mathf.PI);
+		
+
+		AdjustPlayerStats();
+
 	}
+
+	public void DecrementPolygonCount(GameObject polygon) {
+		if (currentScore > 0) currentScore--;
+		polygons.Remove(polygon);
+
+		if (polygons.Count == 0) {
+
+			// polygons = new List<GameObject>();
+
+		
+		}
+
+		else {
+			AdjustArmorRadius();
+		}
+		
+		
+	}
+
+	void AdjustPlayerStats () {
+		// timeBetweenShots = 0.08f + (polygonCount * 0.0025f);
+		// playerMovement.moveSpeed = baseMoveSpeed - (polygonCount * 0.01f);
+		// tr.time = 0.5f + (polygonCount * 0.001f);
+
+		timeBetweenShots = 0.08f + (polygons.Count * 0.0025f);
+		playerMovement.moveSpeed = baseMoveSpeed - (polygons.Count * 0.01f);
+		tr.time = 0.5f + (polygons.Count * 0.001f);
+	}
+
+
+	void OnCollisionEnter2D (Collision2D other) {
+		if (other.gameObject.layer == 10 || other.gameObject.layer == 11) {
+			
+			TakeDamage();
+		}
+	}
+
+	void TakeDamage() {
+		print("took damage");
+		int count = Random.Range(5, 20);
+
+
+		if (polygons.Count == 0) {
+			Die();
+		}
+
+		else if (count > polygons.Count) {
+			foreach (GameObject polygon in polygons) {
+
+				polygon.GetComponent<PolygonController>().StartDestroyCoroutine();
+			}
+
+			
+		}
+
+		else {
+			for (int ii = polygons.Count - count; ii < polygons.Count; ii++) {
+
+				polygons[ii].GetComponent<PolygonController>().StartDestroyCoroutine();
+				// polygons.RemoveAt(ii);
+			}
+		}
+	}
+
+	void Die() {
+		Instantiate (explosion, transform.position, Quaternion.identity);
+		gm.GameOver(maxScore);
+		Destroy(this.gameObject);
+
+		
+	}
+
 }
